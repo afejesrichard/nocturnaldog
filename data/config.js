@@ -14,3 +14,8 @@
 // pillanatképre) — a brief "always fresh" elve szerint.
 
 window.NDOG_FILMS_API = "https://script.google.com/macros/s/AKfycbw0EOZMYBJv-l5nW-s6rG_7_x-E763T6bTfOhND1qBmqvCQGz8u87MFL9ZmP7aH4Bm6/exec";
+
+// Nocturnal Dog — játék-adatforrás (Apps Script web app /exec URL).
+// A "játékok" lapot kiszolgáló külön clasp projekt ("Nocturnal Dog backend").
+// A jatekok.html ezt hívja ?action=list paraméterrel; üresen hagyva látható hibát jelez.
+window.NDOG_GAMES_API = "https://script.google.com/macros/s/AKfycbxKn0giVlhL9D0krLaicr7fATGO7QmyDzrMkU-uUu0tOMsmJvsc-VoCUGAcT3m01Gr9/exec";

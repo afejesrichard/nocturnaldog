@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var GAMES = window.GAMES_DATA || [];
+  var GAMES = [];
 
   var CATEGORIES = [
     "Bemelegítés", "Improvizáció", "Karakter", "Mozgás",
@@ -440,8 +440,51 @@
     writeUrlState();
   }
 
+  /* ---------- data loading (live from the játékok sheet) ---------- */
+  function showStatus(msg, isError) {
+    sidebar.textContent = "";
+    activeChipsEl.textContent = "";
+    results.textContent = "";
+    [statTotal, statFound, statTags, countNum, totalNum].forEach(function (n) {
+      if (n) n.textContent = "0";
+    });
+    var children = [el("h4", { text: isError ? "Nem sikerült betölteni a játékokat." : msg })];
+    if (isError) children.push(el("p", { text: msg }));
+    results.appendChild(el("div", {
+      class: "empty-state" + (isError ? " empty-state--error" : ""),
+      role: "status",
+      "aria-live": "polite"
+    }, children));
+  }
+
+  function loadGames() {
+    showStatus("Játékok betöltése…", false);
+    var api = window.NDOG_GAMES_API;
+    if (!api) { showStatus("A játék-adatforrás nincs beállítva.", true); return; }
+    // ?action=list + cache-buster (no-store) — a brief "always fresh" elve szerint
+    var url = api + (api.indexOf("?") === -1 ? "?" : "&") + "action=list&t=" + Date.now();
+    fetch(url, { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status + (res.statusText ? " " + res.statusText : ""));
+        return res.json();
+      })
+      .then(function (data) {
+        if (data && data.error) throw new Error(data.error);
+        if (data && data.ok === false) throw new Error(data.error || "Ismeretlen hiba.");
+        var games = data && Array.isArray(data.games) ? data.games
+          : (Array.isArray(data) ? data : null);
+        if (!Array.isArray(games)) throw new Error("Váratlan válaszformátum.");
+        if (!games.length) { showStatus("Nincs megjeleníthető játék.", true); return; }
+        GAMES = games;
+        buildSidebar();
+        update();
+      })
+      .catch(function (err) {
+        showStatus(err && err.message ? err.message : String(err), true);
+      });
+  }
+
   /* ---------- init ---------- */
-  buildSidebar();
   searchInput.value = state.q;
   sortSelect.value = state.sort;
   setViewButtons();
@@ -461,5 +504,5 @@
     }
   });
 
-  update();
+  loadGames();
 })();
