@@ -6,4 +6,4 @@
 // localStorage-ban tárolja — de ha ide is bemásolod, akkor a publikus játékadatbázis-
 // oldal (jatekok.html) is mindig a Sheets-ből frissül.
 
-window.NDOG_API = "";
+window.NDOG_API = "https://script.google.com/macros/s/AKfycbxKn0giVlhL9D0krLaicr7fATGO7QmyDzrMkU-uUu0tOMsmJvsc-VoCUGAcT3m01Gr9/exec";
