@@ -1,3 +1,4 @@
+// SNAPSHOT, NOT LIVE. Live data fetched from Apps Script web app. See data/config.js.
 window.FILMS_DATA = [
   {
     "title": "1435MM",

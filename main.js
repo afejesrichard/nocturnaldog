@@ -58,37 +58,99 @@
   }
 
   /* ---------- films ---------- */
-  var films = (window.FILMS_DATA || []).slice();
   var grid = document.getElementById("filmsGrid");
   var toolbar = document.getElementById("filmsToolbar");
-  if (!grid || !toolbar || !films.length) return;
+  if (!grid || !toolbar) return;
 
   var round = function (n) { return Math.round(n); };
   var ytThumb = function (id) { return "https://img.youtube.com/vi/" + id + "/hqdefault.jpg"; };
-
-  // Year chips: "Mind" + each year, newest first
-  var years = films
-    .map(function (f) { return f.year; })
-    .filter(function (y, i, a) { return a.indexOf(y) === i; })
-    .sort(function (a, b) { return b - a; });
-
-  var chipData = [["Mind", films.length]];
-  years.forEach(function (y) {
-    chipData.push([String(y), films.filter(function (f) { return f.year === y; }).length]);
-  });
-
   var activeYear = "Mind";
-  chipData.forEach(function (pair) {
-    var label = pair[0], count = pair[1];
-    var chip = el("button", {
-      class: "chip" + (label === "Mind" ? " active" : ""),
-      type: "button",
-      "data-year": label,
-      "aria-pressed": label === "Mind" ? "true" : "false"
-    }, [label + " ", el("span", { class: "chip-count", text: String(count) })]);
-    chip.addEventListener("click", function () { setYear(label); });
-    toolbar.appendChild(chip);
-  });
+
+  loadFilms();
+
+  function loadFilms() {
+    showStatus("Filmek betöltése…", false);
+    var api = window.NDOG_FILMS_API;
+    if (!api) {
+      showStatus("A film-adatforrás nincs beállítva.", true);
+      return;
+    }
+    // cache-buster + no-store: a brief "always fresh" elve szerint
+    var url = api + (api.indexOf("?") === -1 ? "?" : "&") + "t=" + Date.now();
+    fetch(url, { cache: "no-store" })
+      .then(function (res) {
+        // 401/403/404/500 sikeres HTTP-csere, amit a .catch nem fog el — itt kezeljük
+        if (!res.ok) throw new Error("HTTP " + res.status + (res.statusText ? " " + res.statusText : ""));
+        return res.json();
+      })
+      .then(function (data) {
+        // GAS surfaces failures as { error } with HTTP 200 — treat as failure
+        if (data && data.error) throw new Error(data.error);
+        if (!Array.isArray(data)) throw new Error("Váratlan válaszformátum.");
+        renderFilms(data);
+      })
+      .catch(function (err) {
+        showStatus(err && err.message ? err.message : String(err), true);
+      });
+  }
+
+  function showStatus(msg, isError) {
+    toolbar.innerHTML = "";
+    grid.innerHTML = "";
+    var children = [
+      el("p", {
+        class: "films-status-msg",
+        text: isError ? "Nem sikerült betölteni a filmeket." : msg
+      })
+    ];
+    if (isError) children.push(el("p", { class: "films-status-detail", text: msg }));
+    grid.appendChild(el("div", {
+      class: "films-status" + (isError ? " films-status--error" : ""),
+      role: "status",
+      "aria-live": "polite"
+    }, children));
+  }
+
+  function renderFilms(films) {
+    toolbar.innerHTML = "";
+    grid.innerHTML = "";
+    if (!films.length) {
+      showStatus("Nincs megjeleníthető film.", true);
+      return;
+    }
+
+    // Year chips: "Mind" + each year, newest first
+    var years = films
+      .map(function (f) { return f.year; })
+      .filter(function (y, i, a) { return a.indexOf(y) === i; })
+      .sort(function (a, b) { return b - a; });
+
+    var chipData = [["Mind", films.length]];
+    years.forEach(function (y) {
+      chipData.push([String(y), films.filter(function (f) { return f.year === y; }).length]);
+    });
+
+    activeYear = "Mind";
+    chipData.forEach(function (pair) {
+      var label = pair[0], count = pair[1];
+      var chip = el("button", {
+        class: "chip" + (label === "Mind" ? " active" : ""),
+        type: "button",
+        "data-year": label,
+        "aria-pressed": label === "Mind" ? "true" : "false"
+      }, [label + " ", el("span", { class: "chip-count", text: String(count) })]);
+      chip.addEventListener("click", function () { setYear(label); });
+      toolbar.appendChild(chip);
+    });
+
+    // Cards, sorted newest year first (stable within a year)
+    films
+      .map(function (f, i) { return { f: f, i: i }; })
+      .sort(function (a, b) { return b.f.year - a.f.year || a.i - b.i; })
+      .forEach(function (entry) {
+        grid.appendChild(buildCard(entry.f));
+      });
+  }
 
   function setYear(year) {
     activeYear = year;
@@ -102,14 +164,6 @@
       card.hidden = !show;
     });
   }
-
-  // Cards, sorted newest year first (stable within a year)
-  films
-    .map(function (f, i) { return { f: f, i: i }; })
-    .sort(function (a, b) { return b.f.year - a.f.year || a.i - b.i; })
-    .forEach(function (entry) {
-      grid.appendChild(buildCard(entry.f));
-    });
 
   function buildCard(film) {
     var thumb;
