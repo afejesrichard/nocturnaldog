@@ -38,6 +38,9 @@ const GAME_COLUMNS = [
 const FILM_COLUMNS = ["title","year","genre","duration","block","ytId","link","description"];
 const FILM_BLOCKS  = ['Ident', 'Fordulatok', 'Projektek', 'Sötét oldal', 'Egyéb'];
 
+const GAME_CATEGORIES = ['Bemelegítés', 'Improvizáció', 'Karakter', 'Mozgás', 'Hang és szöveg', 'Bizalom', 'Koncentráció'];
+const GAME_SIZES      = ['2-4', '5-10', '10+'];
+
 // ────────────────── ONE-TIME SETUP ──────────────────
 function setup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -46,8 +49,7 @@ function setup() {
   if (!games) {
     games = ss.insertSheet(SHEET_GAMES);
     games.getRange(1, 1, 1, GAME_COLUMNS.length).setValues([GAME_COLUMNS]);
-    games.setFrozenRows(1);
-    games.setColumnWidths(1, GAME_COLUMNS.length, 140);
+    formatGamesSheet_(games, 0);
   }
 
   let films = ss.getSheetByName(SHEET_FILMS);
@@ -257,6 +259,116 @@ function logAction(user, action, detail) {
     if (sheet) sheet.appendRow([new Date(), user, action, detail]);
   } catch (e) {}
 }
+
+// ────────────────── GAME SEED / IMPORT ──────────────────
+/**
+ * One-time seed: tölti a "játékok" lapot a weboldal játékadatbázisával (4 minta játék).
+ * Futtasd a szkript-szerkesztőből egyszer. Új játékot később új sorként, vagy a
+ * szerkesztőfelületen (szerkeszto.html) keresztül adj hozzá.
+ */
+function importGames() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_GAMES);
+  if (!sheet) sheet = ss.insertSheet(SHEET_GAMES);
+  sheet.clearContents();
+  sheet.clearFormats();
+  const rows = GAME_DATA_;
+  const values = [GAME_COLUMNS].concat(rows);
+  sheet.getRange(1, 1, values.length, GAME_COLUMNS.length).setValues(values);
+  formatGamesSheet_(sheet, rows.length);
+  SpreadsheetApp.flush();
+  Logger.log("Kész: " + rows.length + " játék importálva a(z) \"" + SHEET_GAMES + "\" lapra.");
+}
+
+function formatGamesSheet_(sheet, n) {
+  const cols = GAME_COLUMNS.length;
+  const idx  = (k) => GAME_COLUMNS.indexOf(k) + 1;
+  const rowsN = Math.max(n, 1);
+  sheet.setFrozenRows(1);
+  sheet.getRange(1, 1, 1, cols)
+    .setFontWeight("bold").setBackground("#14110f").setFontColor("#f4b942")
+    .setVerticalAlignment("middle");
+  sheet.setRowHeight(1, 30);
+  const widths = {
+    id: 150, title: 200, category: 130, energy: 70, groupSize: 90, duration: 80,
+    minAge: 70, tags: 220, summary: 340, howTo: 460, notes: 420, updated: 140, updatedBy: 110
+  };
+  GAME_COLUMNS.forEach((k, i) => sheet.setColumnWidth(i + 1, widths[k] || 120));
+  ["energy", "duration", "minAge"].forEach(k =>
+    sheet.getRange(2, idx(k), rowsN, 1).setNumberFormat("0"));
+  ["summary", "howTo", "notes"].forEach(k =>
+    sheet.getRange(2, idx(k), rowsN, 1)
+      .setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP).setVerticalAlignment("top"));
+  const catRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(GAME_CATEGORIES, true).setAllowInvalid(true).build();
+  sheet.getRange(2, idx("category"), rowsN + 100, 1).setDataValidation(catRule);
+  const sizeRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(GAME_SIZES, true).setAllowInvalid(true).build();
+  sheet.getRange(2, idx("groupSize"), rowsN + 100, 1).setDataValidation(sizeRule);
+}
+
+const GAME_DATA_ = [
+    [
+      "zip-zap-zop",
+      "Zip Zap Zop",
+      "Bemelegítés",
+      4,
+      "10+",
+      5,
+      8,
+      "fókusz, körjáték, reflex, ritmus",
+      "Energialabda jár körbe-körbe szem-kontaktussal és három szóval.",
+      "Mindenki körbe áll. Az első játékos rámutat egy másikra és mondja: ZIP. Aki kapta, rámutat a következőre: ZAP. A harmadik: ZOP. Aztán újra ZIP. A lendület soha nem állhat le; aki bizonytalankodik vagy elrontja, kiesik vagy bohóc-meghajlással visszaülhet.",
+      "Klasszikus indító. Egy órás próba elején, állva, 3-4 percig. Ha gyors a csoport, vezess be tiltott szavakat (pl. \"BOING\" = irány váltás).",
+      "",
+      ""
+    ],
+    [
+      "igen-es",
+      "Igen, és…",
+      "Improvizáció",
+      3,
+      "2-4",
+      10,
+      12,
+      "alapelv, jelenetépítés, elfogadás",
+      "Az improvizáció aranyszabálya: minden ajánlatra rábólintunk és továbbépítjük.",
+      "Két játékos jelenetet kezd. Bármit mond a másik, te azt elfogadod (\"Igen\"), és HOZZÁTESZEL valamit (\"és…\"). Tilos blokkolni, kérdezni vagy tagadni. 2-3 perces jelenetek, utána csere.",
+      "A drámafoglalkozások legfontosabb alapja. Először szándékosan játszátok le rosszul (mindenre \"nem\") — utána értik meg igazán.",
+      "",
+      ""
+    ],
+    [
+      "tukor",
+      "Tükör",
+      "Mozgás",
+      2,
+      "2-4",
+      8,
+      8,
+      "páros, koncentráció, csend, test",
+      "Páros lassú mozdulatkövetés — kívülről nézve egyetlen testté olvadtok.",
+      "Párokban, szemben. Az egyik vezet, a másik tükör — pontosan és lassan követi minden mozdulatát. Csere 90 másodperc után. Haladó: vezetőváltás láthatatlanul, néma egyezséggel.",
+      "Ideális csendre hangoló gyakorlat. Halk zenére még jobb.",
+      "",
+      ""
+    ],
+    [
+      "kavezo",
+      "Kávézó",
+      "Karakter",
+      2,
+      "2-4",
+      15,
+      14,
+      "karakter, improv, státusz, jelenet",
+      "Egyszerű helyszín, hármas jelenet — a feszültséget a státuszkülönbség adja.",
+      "Egy kávézóban három karakter: pincér, törzsvendég, új vendég. A vezető előre megadja a státusz-számokat (1-10). A jelenet 4 perces. Cél: a számok kihallatszanak a viselkedésből, de senki nem mondja ki őket.",
+      "Keith Johnstone státusz-elméletének bevezetésére tökéletes. Felvenni és visszanézni nagyon tanulságos.",
+      "",
+      ""
+    ]
+  ];
 
 // ────────────────── FILM DATA OPS ──────────────────
 function listFilms() {
