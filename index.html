@@ -22,6 +22,7 @@
         <button class="nav-mobile" id="navToggle" aria-label="Menü" aria-expanded="false" aria-controls="navLinks">≡</button>
         <div class="nav-links" id="navLinks">
           <a class="nav-link" href="#rolunk">Rólunk</a>
+          <a class="nav-link" href="#csapat">Csapat</a>
           <a class="nav-link" href="#filmek">Filmek</a>
           <a class="nav-link" href="/jatekok/">Játékadatbázis <span class="nav-ext" aria-hidden="true">↗</span></a>
           <a class="nav-link" href="#kapcsolat">Kapcsolat</a>
@@ -70,7 +71,8 @@
         <h2 class="visually-hidden">Rólunk</h2>
       </header>
 
-      <div class="about-grid">
+      <!-- Single readable column now that the Műhelyvezetők card moved to 03 Csapat. -->
+      <div class="about-solo">
         <div class="about-text">
           <p>
             A Nocturnal Dog 2015-ben egy teaházból és annak pincéjéből indult
@@ -93,31 +95,30 @@
             elzárva egy hét alatt forgatunk egy nagyobb lélegzetvételű alkotást.
           </p>
         </div>
-
-        <div class="about-side">
-          <div class="about-card about-card--people">
-            <h3>Műhelyvezetők</h3>
-            <div class="crew-row">
-              <span class="name">László Ádám</span>
-              <span class="role">Drámapedagógus · mentálhigiénés szakember</span>
-            </div>
-            <div class="crew-row">
-              <span class="name">Fejes Richárd</span>
-              <span class="role">Narratológus kutató</span>
-            </div>
-            <div class="crew-row">
-              <span class="name">Váradi Márton</span>
-              <span class="role">Közösségszervező · orvostanhallgató</span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- 03 — Filmek -->
+    <!-- 03 — Csapat · Szabad portrék -->
+    <!-- The Műhelyvezetők card that used to live in 02 Rólunk was replaced by
+         this full portrait section. Names/roles now render from data/team.js. -->
+    <section id="csapat" class="team">
+      <div class="lib-intro">
+        <p class="lib-kicker"><span class="dot"></span><span>03 — Csapat · Szabad portrék</span></p>
+        <h1>Hárman tartjuk <span class="accent">a műhelyt</span>.</h1>
+        <p class="lib-lead">
+          2015 óta. Nem stáblista, nem fejléckép-sor — három arc, ahogy a sötétből
+          kibontakozik, mellettük a saját hangjuk. Görgess. Kattints bárkire a teljes
+          bemutatkozásért.
+        </p>
+      </div>
+
+      <div class="lib-people" id="teamPeople"></div>
+    </section>
+
+    <!-- 04 — Filmek -->
     <section class="section" id="filmek">
       <header class="section-head">
-        <div class="section-num">03 — Portfólió</div>
+        <div class="section-num">04 — Portfólió</div>
         <div>
           <h2 class="section-title">Filmek</h2>
           <p class="section-sub">
@@ -131,10 +132,10 @@
       <div class="films-grid" id="filmsGrid"></div>
     </section>
 
-    <!-- 04 — Tudástár / Játékadatbázis teaser -->
+    <!-- 05 — Tudástár / Játékadatbázis teaser -->
     <section class="section" id="jatekok-teaser">
       <header class="section-head">
-        <div class="section-num">04 — Tudástár</div>
+        <div class="section-num">05 — Tudástár</div>
         <div>
           <h2 class="section-title">Játékadatbázis</h2>
           <p class="section-sub">
@@ -201,9 +202,10 @@
     </section>
   </main>
 
-  <!-- 05 — Kapcsolat -->
+  <!-- 06 — Kapcsolat -->
   <footer class="footer" id="kapcsolat">
     <div class="footer-inner">
+      <div class="section-num footer-num">06 — Kapcsolat</div>
       <div class="footer-top">
         <div>
           <div class="footer-brand">Nocturnal <span class="accent">Dog</span></div>
@@ -215,6 +217,7 @@
         <div>
           <h2 class="footer-h">Műhely</h2>
           <a href="#rolunk">Rólunk</a>
+          <a href="#csapat">Csapat</a>
           <a href="#filmek">Filmek</a>
           <a href="/jatekok/">Játékadatbázis</a>
         </div>
@@ -234,6 +237,7 @@
   </footer>
 
   <script src="data/config.js"></script>
+  <script src="data/team.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

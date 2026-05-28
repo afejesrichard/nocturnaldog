@@ -38,7 +38,9 @@
   }
 
   /* ---------- active section highlight ---------- */
-  var sectionIds = ["rolunk", "filmek", "kapcsolat"];
+  // INVARIANT: section numbers, nav anchors, and the scroll-spy map must stay in
+  // sync. Adding Csapat as 03 renumbered Filmek->04, Tudástár->05, footer->06.
+  var sectionIds = ["rolunk", "csapat", "filmek", "kapcsolat"];
   if ("IntersectionObserver" in window) {
     var obs = new IntersectionObserver(function (entries) {
       var visible = entries
@@ -55,6 +57,160 @@
       var node = document.getElementById(id);
       if (node) obs.observe(node);
     });
+  }
+
+  /* ---------- team · Szabad portrék ---------- */
+  // Rendered straight from the data/team.js snapshot (window.TEAM_DATA) — there
+  // is no live endpoint, so this section can never blank. Runs BEFORE the films
+  // early-return below so it renders even on pages without a films grid.
+  renderTeam();
+
+  function renderTeam() {
+    var mount = document.getElementById("teamPeople");
+    if (!mount || !Array.isArray(window.TEAM_DATA)) return;
+
+    // hand-drawn amber underline (the marker-sketch nod), set per-name
+    var SCRIBBLE =
+      '<svg class="lib-scribble" viewBox="0 0 300 22" fill="none" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path d="M4 13 C 60 5, 120 19, 178 9 S 268 6, 296 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<path d="M22 18 C 90 12, 150 21, 230 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/></svg>';
+
+    window.TEAM_DATA.forEach(function (p) {
+      var imgProps = {
+        src: p.photo,
+        alt: p.given + " " + p.family,
+        loading: "lazy"
+      };
+      // Intrinsic width/height let the browser reserve the box from its aspect
+      // ratio, so a lazy/feathered portrait can't collapse to 0 height before
+      // paint (regression seen in the prototype) and the section never jumps.
+      if (p.w) imgProps.width = p.w;
+      if (p.h) imgProps.height = p.h;
+
+      var figure = el("figure", { class: "lib-figure" }, [
+        el("div", { class: "glow", "aria-hidden": "true" }),
+        el("div", { class: "ticks", text: p.idx + " · Műhelyvezető · " + p.since.replace(/^.*· /, "") }),
+        el("div", { class: "lib-media lib-media--photo" }, [el("img", imgProps)])
+      ]);
+
+      var more = el("button", { class: "lib-more", type: "button" }, [
+        "Teljes bemutatkozás",
+        el("span", { class: "ar", html: "&rarr;", "aria-hidden": "true" })
+      ]);
+      more.addEventListener("click", function () { openDrawer(p, more); });
+
+      var scribble = el("div", { html: SCRIBBLE }).firstChild;
+
+      var body = el("div", { class: "lib-body" }, [
+        el("div", { class: "lib-role", text: p.role }),
+        el("h2", { class: "lib-name" }, [
+          el("span", { class: "given", text: p.given }),
+          el("span", { class: "family", text: p.family })
+        ]),
+        scribble,
+        el("p", { class: "lib-blurb", text: p.lead }),
+        el("div", { class: "lib-focus" }, p.focus.map(function (f) { return el("span", { text: f }); })),
+        more
+      ]);
+
+      mount.appendChild(el("article", { class: "lib-person" }, [figure, body]));
+    });
+  }
+
+  /* ---------- team detail drawer ---------- */
+  // Mirrors the film modal's open/close/Escape/backdrop/scroll-lock/focus-restore
+  // pattern (kept as a separate implementation so the film modal stays behavior-
+  // identical), and adds a real focus trap for the dialog as the drawer requires.
+  var drawerBack = null;
+  var drawerLastFocused = null;
+
+  function closeDrawer() {
+    if (!drawerBack) return;
+    document.removeEventListener("keydown", onDrawerKeydown);
+    document.body.style.overflow = "";
+    drawerBack.remove();
+    drawerBack = null;
+    if (drawerLastFocused && drawerLastFocused.focus) drawerLastFocused.focus();
+  }
+
+  function drawerFocusable() {
+    if (!drawerBack) return [];
+    return Array.prototype.slice.call(drawerBack.querySelectorAll(
+      'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'
+    ));
+  }
+
+  function onDrawerKeydown(e) {
+    if (e.key === "Escape") { closeDrawer(); return; }
+    if (e.key !== "Tab") return;
+    // Trap Tab focus inside the dialog so it can't leak to the page behind it.
+    var f = drawerFocusable();
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
+
+  function openDrawer(p, trigger) {
+    drawerLastFocused = trigger || document.activeElement;
+
+    var closeBtn = el("button", {
+      class: "lib-drawer-close",
+      type: "button",
+      "aria-label": "Bezárás"
+    }, ["×"]);
+    closeBtn.addEventListener("click", closeDrawer);
+
+    var heroImg = el("img", { src: p.photo, alt: p.given + " " + p.family });
+
+    var bodyKids = [el("p", { class: "lead", text: p.lead })];
+    p.bio.forEach(function (para) { bodyKids.push(el("p", { text: para })); });
+    bodyKids.push(el("div", { class: "lib-block" }, [
+      el("h4", { text: "Mit hoz a műhelybe" }),
+      el("div", { class: "lib-tags" }, p.focus.map(function (f) { return el("span", { text: f }); }))
+    ]));
+    // Only render the credits block when the person has linked works.
+    if (p.works && p.works.length) {
+      bodyKids.push(el("div", { class: "lib-block" }, [
+        el("h4", { text: "Kötődő munkák" }),
+        el("div", { class: "lib-credit" }, p.works.map(function (w) {
+          return el("div", { class: "row" }, [
+            el("span", { class: "t", text: w.t }),
+            el("span", { class: "y", text: w.y })
+          ]);
+        }))
+      ]));
+    }
+
+    var drawer = el("aside", {
+      class: "lib-drawer",
+      role: "dialog",
+      "aria-modal": "true",
+      "aria-label": p.given + " " + p.family
+    }, [
+      el("div", { class: "lib-drawer-hero" }, [
+        heroImg,
+        el("div", { class: "scrim", "aria-hidden": "true" }),
+        closeBtn,
+        el("div", { class: "plate" }, [
+          el("div", { class: "role", text: p.role }),
+          el("div", { class: "name", text: p.given + " " + p.family })
+        ])
+      ]),
+      el("div", { class: "lib-drawer-body" }, bodyKids)
+    ]);
+    drawer.addEventListener("click", function (e) { e.stopPropagation(); });
+
+    drawerBack = el("div", { class: "lib-drawer-back" }, [drawer]);
+    drawerBack.addEventListener("click", closeDrawer);
+
+    document.body.appendChild(drawerBack);
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onDrawerKeydown);
+    closeBtn.focus();
   }
 
   /* ---------- films ---------- */
