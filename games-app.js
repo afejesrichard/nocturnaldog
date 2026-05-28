@@ -357,7 +357,7 @@
     closeBtn.addEventListener("click", closeDrawer);
 
     var crumb = el("div", { class: "crumb" }, [
-      "Játékok ", el("span", { class: "crumb-sep", text: "/" }), " ",
+      "Játékadatbázis ", el("span", { class: "crumb-sep", text: "/" }), " ",
       el("span", { class: "accent", text: game.category })
     ]);
 
@@ -458,7 +458,7 @@
   }
 
   function loadGames() {
-    showStatus("Játékok betöltése…", false);
+    showStatus("Játékadatbázis betöltése…", false);
     var api = window.NDOG_GAMES_API;
     if (!api) { showStatus("A játék-adatforrás nincs beállítva.", true); return; }
     // ?action=list + cache-buster (no-store) — a brief "always fresh" elve szerint
