@@ -1228,9 +1228,18 @@ html[data-theme="paper"] .gp-nav { background: rgba(243, 236, 224, 0.92); }
   transition: color 0.2s;
 }
 .gp-nav-links a:hover { color: var(--ink); }
+.gp-nav-links a.gp-editor-link {
+  opacity: 0.45;
+  font-size: 14px;
+  line-height: 1;
+  padding: 4px 6px;
+  margin-left: -10px;
+}
+.gp-nav-links a.gp-editor-link:hover { opacity: 1; }
 @media (max-width: 720px) {
   .gp-nav-links { gap: 14px; }
-  .gp-nav-links a:not(.gp-back) { display: none; }
+  .gp-nav-links a:not(.gp-back):not(.gp-editor-link) { display: none; }
+  .gp-nav-links a.gp-editor-link { margin-left: 0; }
 }
 
 /* Hero */
