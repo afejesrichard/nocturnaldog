@@ -2043,8 +2043,9 @@ select:focus-visible {
   position: relative;
   z-index: 4;
 }
+/* family name sits small/faint on top, given name large below it */
+.lib-name .family { display: block; color: var(--ink-faint); font-size: 0.42em; letter-spacing: 0.02em; margin-bottom: 6px; }
 .lib-name .given { display: block; color: var(--ink); }
-.lib-name .family { display: block; color: var(--ink-faint); font-size: 0.42em; letter-spacing: 0.02em; margin-top: 6px; }
 /* pull the name across the gutter so it overlaps the portrait edge */
 .lib-person:not(:nth-child(even)) .lib-name { margin-left: clamp(-120px, -9vw, -24px); }
 .lib-person:nth-child(even) .lib-name { margin-right: clamp(-120px, -9vw, -24px); text-align: right; }

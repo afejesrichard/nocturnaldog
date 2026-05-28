@@ -78,7 +78,7 @@
     window.TEAM_DATA.forEach(function (p) {
       var imgProps = {
         src: p.photo,
-        alt: p.given + " " + p.family,
+        alt: p.family + " " + p.given,
         loading: "lazy"
       };
       // Intrinsic width/height let the browser reserve the box from its aspect
@@ -103,9 +103,11 @@
 
       var body = el("div", { class: "lib-body" }, [
         el("div", { class: "lib-role", text: p.role }),
+        // Hungarian order: family name on top (small/faint), given name below
+        // (large) — e.g. "László" over a big "Ádám".
         el("h2", { class: "lib-name" }, [
-          el("span", { class: "given", text: p.given }),
-          el("span", { class: "family", text: p.family })
+          el("span", { class: "family", text: p.family }),
+          el("span", { class: "given", text: p.given })
         ]),
         scribble,
         el("p", { class: "lib-blurb", text: p.lead }),
@@ -164,7 +166,7 @@
     }, ["×"]);
     closeBtn.addEventListener("click", closeDrawer);
 
-    var heroImg = el("img", { src: p.photo, alt: p.given + " " + p.family });
+    var heroImg = el("img", { src: p.photo, alt: p.family + " " + p.given });
 
     var bodyKids = [el("p", { class: "lead", text: p.lead })];
     p.bio.forEach(function (para) { bodyKids.push(el("p", { text: para })); });
@@ -189,7 +191,7 @@
       class: "lib-drawer",
       role: "dialog",
       "aria-modal": "true",
-      "aria-label": p.given + " " + p.family
+      "aria-label": p.family + " " + p.given
     }, [
       el("div", { class: "lib-drawer-hero" }, [
         heroImg,
@@ -197,7 +199,7 @@
         closeBtn,
         el("div", { class: "plate" }, [
           el("div", { class: "role", text: p.role }),
-          el("div", { class: "name", text: p.given + " " + p.family })
+          el("div", { class: "name", text: p.family + " " + p.given })
         ])
       ]),
       el("div", { class: "lib-drawer-body" }, bodyKids)
