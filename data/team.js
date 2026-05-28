@@ -25,13 +25,13 @@ window.TEAM_DATA = [
   },
   {
     id: "richard", idx: "02",
-    given: "Richárd", family: "Fejes",
-    role: "Narratológus kutató",
+    given: "Ricsi", family: "Fejes",
+    role: "Narratológus kutató · Játékproducer",
     since: "Műhelyvezető · 2015 óta",
     photo: "assets/team/richard-web.jpg?v=1", w: 1200, h: 921,
     lead: "A történet anatómusa — aki szétszedi, majd a kamaszok kezébe adva újra összerakja a mesét.",
     bio: [
-      "Richárd narratológus kutatóként a történetmesélés szerkezetét hozza a műhelybe: miért működik egy fordulat, hol lakik egy karakter vágya, és mitől lesz egy etűdből valódi mű. A forgatókönyv-szobákban az ő kérdései feszítik szét a kézenfekvő ötleteket.",
+      "Ricsi narratológus kutatóként a történetmesélés szerkezetét hozza a műhelybe: miért működik egy fordulat, hol lakik egy karakter vágya, és mitől lesz egy etűdből valódi mű. A forgatókönyv-szobákban az ő kérdései feszítik szét a kézenfekvő ötleteket.",
       "Számára a film „az élet és a kultúra kódrendszere” — és a műhely tudástárát, a tíz év alatt gyűjtött drámajáték-adatbázist is ez a rendszerező, kutatói szemlélet tartja össze."
     ],
     focus: ["Dramaturgia", "Forgatókönyv", "Narratológia", "Tudástár", "Kutatás"],
@@ -39,13 +39,13 @@ window.TEAM_DATA = [
   },
   {
     id: "marton", idx: "03",
-    given: "Márton", family: "Váradi",
+    given: "Marci", family: "Váradi",
     role: "Közösségszervező · orvostanhallgató",
     since: "Műhelyvezető · 2015 óta",
     photo: "assets/team/marton-web2.jpg?v=2", w: 1200, h: 1183,
     lead: "A láthatatlan állvány — aki nélkül a tábor, a stáb és a logisztika nem állna lábra.",
     bio: [
-      "Márton közösségszervezőként és orvostanhallgatóként a műhely gyakorlati gerince: az ottalvós tábor, a forgatási napok és a stáb körüli rengeteg mozgó alkatrész az ő kezében áll össze működő egésszé. Ahol mások a képet látják, ott ő a feltételeket teremti meg hozzá.",
+      "Marci közösségszervezőként és orvostanhallgatóként a műhely gyakorlati gerince: az ottalvós tábor, a forgatási napok és a stáb körüli rengeteg mozgó alkatrész az ő kezében áll össze működő egésszé. Ahol mások a képet látják, ott ő a feltételeket teremti meg hozzá.",
       "A csapatot összetartó energia nagy része tőle ered — figyel arra, hogy egy hét „mindentől elzárva” ne kimerítő legyen, hanem közösségi élmény, ahonnan film és barátságok egyaránt hazatérnek."
     ],
     focus: ["Szervezés", "Tábor", "Produkció", "Logisztika", "Közösség"],
