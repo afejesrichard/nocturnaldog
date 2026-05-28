@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Játékadatbázis — Nocturnal Dog</title>
+  <meta name="description" content="Dráma- és improvizációs gyakorlatok adatbázisa a Nocturnal Dog műhelytől. Keress kulcsszóra, szűrj kategóriára, létszámra, időre és energiára." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="/assets/nocturnal_logo.png" type="image/png" />
+</head>
+<body>
+  <div class="gp-page">
+    <nav class="gp-nav" aria-label="Fő navigáció">
+      <div class="gp-nav-inner">
+        <a class="gp-brand" href="/">
+          <img src="/assets/nocturnal_logo.png" alt="" width="30" height="30" />
+          <span>Nocturnal Dog</span>
+        </a>
+        <span class="gp-crumb"><span aria-hidden="true">/</span> <span class="accent">Játékadatbázis</span></span>
+        <div class="gp-nav-links">
+          <a class="gp-back" href="/">← Vissza</a>
+          <a href="/#filmek">Filmek</a>
+          <a href="/#rolunk">Rólunk</a>
+          <a href="/#kapcsolat">Kapcsolat</a>
+          <a class="gp-editor-link" href="/games-editor/szerkeszto.html" title="Szerkesztő — belépés" aria-label="Szerkesztő — belépés">✎</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="gp-hero">
+      <p class="gp-eyebrow">
+        <span class="dot"></span>
+        <span>Tudástár · 2015 óta gyűjtve</span>
+      </p>
+      <h1 class="gp-title">Játékadatbázis</h1>
+      <p class="gp-lead">
+        Tíz év alatt összeszedett dráma- és improvizációs gyakorlatok — bemelegítések,
+        bizalom-játékok, karakter-mélyítések, csoport-kísérletek. Keress kulcsszóra,
+        szűrj létszámra, időre, energiára, vagy hagyd, hogy a véletlen találjon neked.
+      </p>
+
+      <div class="gp-search">
+        <div class="gp-search-box">
+          <span class="icon" aria-hidden="true">⌕</span>
+          <input
+            id="search"
+            class="gp-search-input"
+            type="search"
+            aria-label="Keresés játékok között"
+            placeholder="Keress játékra, módszerre, címkére…  (nyomd meg a /-t)" />
+        </div>
+        <button id="randomBtn" class="icon-btn" type="button" title="Véletlen játék">
+          🎲 <span>Véletlen</span>
+        </button>
+        <button id="clearBtn" class="icon-btn clear-btn" type="button" hidden>
+          Szűrők törlése (0)
+        </button>
+      </div>
+
+      <div class="gp-stats">
+        <span><b id="statTotal">0</b>játék összesen</span>
+        <span class="accent"><b id="statFound">0</b>találat most</span>
+        <span><b id="statCats">7</b>kategória</span>
+        <span><b id="statTags">0</b>címke</span>
+      </div>
+    </header>
+
+    <div class="gp-toolbar">
+      <div class="gp-toolbar-inner">
+        <div class="pill-group">
+          <span class="lbl" id="sortLabel">Rendezés</span>
+          <select id="sort" class="gp-select" aria-labelledby="sortLabel">
+            <option value="alpha">Cím szerint</option>
+            <option value="cat">Kategória szerint</option>
+            <option value="dur">Időtartam (rövid→hosszú)</option>
+            <option value="dur-desc">Időtartam (hosszú→rövid)</option>
+            <option value="energy">Energia (alacsony→magas)</option>
+            <option value="random">Véletlen</option>
+          </select>
+        </div>
+        <div class="pill-group">
+          <span class="lbl">Nézet</span>
+          <div class="view-toggle" role="group" aria-label="Nézet váltása">
+            <button type="button" data-view="list" class="active">≡ Lista</button>
+            <button type="button" data-view="cards">▦ Kártyák</button>
+          </div>
+        </div>
+        <div class="pill-group chips-group" id="activeChips"></div>
+        <div class="right">
+          <span><span class="count" id="countNum">0</span> / <span id="totalNum">0</span> találat</span>
+        </div>
+      </div>
+    </div>
+
+    <main class="gp-main">
+      <aside class="gp-sidebar" id="sidebar" aria-label="Szűrők"></aside>
+      <section id="results" aria-label="Találatok" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <script src="/data/config.js"></script>
+  <script src="/games-app.js"></script>
+</body>
+</html>
