@@ -64,7 +64,7 @@
 
   var round = function (n) { return Math.round(n); };
   var ytThumb = function (id) { return "https://img.youtube.com/vi/" + id + "/hqdefault.jpg"; };
-  var activeYear = "Mind";
+  var activeGenre = "Mind";
 
   loadFilms();
 
@@ -119,27 +119,28 @@
       return;
     }
 
-    // Year chips: "Mind" + each year, newest first
-    var years = films
-      .map(function (f) { return f.year; })
-      .filter(function (y, i, a) { return a.indexOf(y) === i; })
-      .sort(function (a, b) { return b - a; });
+    // Genre chips: "Mind" + each genre (alphabetical)
+    var genres = films
+      .map(function (f) { return f.genre; })
+      .filter(function (g) { return g != null && g !== ""; })
+      .filter(function (g, i, a) { return a.indexOf(g) === i; })
+      .sort(function (a, b) { return String(a).localeCompare(String(b), "hu"); });
 
     var chipData = [["Mind", films.length]];
-    years.forEach(function (y) {
-      chipData.push([String(y), films.filter(function (f) { return f.year === y; }).length]);
+    genres.forEach(function (g) {
+      chipData.push([String(g), films.filter(function (f) { return f.genre === g; }).length]);
     });
 
-    activeYear = "Mind";
+    activeGenre = "Mind";
     chipData.forEach(function (pair) {
       var label = pair[0], count = pair[1];
       var chip = el("button", {
         class: "chip" + (label === "Mind" ? " active" : ""),
         type: "button",
-        "data-year": label,
+        "data-genre": label,
         "aria-pressed": label === "Mind" ? "true" : "false"
       }, [label + " ", el("span", { class: "chip-count", text: String(count) })]);
-      chip.addEventListener("click", function () { setYear(label); });
+      chip.addEventListener("click", function () { setGenre(label); });
       toolbar.appendChild(chip);
     });
 
@@ -152,15 +153,15 @@
       });
   }
 
-  function setYear(year) {
-    activeYear = year;
+  function setGenre(genre) {
+    activeGenre = genre;
     toolbar.querySelectorAll(".chip").forEach(function (c) {
-      var on = c.getAttribute("data-year") === year;
+      var on = c.getAttribute("data-genre") === genre;
       c.classList.toggle("active", on);
       c.setAttribute("aria-pressed", String(on));
     });
     grid.querySelectorAll(".film-card").forEach(function (card) {
-      var show = year === "Mind" || card.getAttribute("data-year") === year;
+      var show = genre === "Mind" || card.getAttribute("data-genre") === genre;
       card.hidden = !show;
     });
   }
@@ -175,7 +176,8 @@
     var card = el("button", {
       class: "film-card",
       type: "button",
-      "data-year": String(film.year)
+      "data-year": String(film.year),
+      "data-genre": String(film.genre == null ? "" : film.genre)
     }, [
       el("div", { class: "film-thumb" }, [
         thumb,
