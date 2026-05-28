@@ -59,7 +59,7 @@
     });
   }
 
-  /* ---------- team · Szabad portrék ---------- */
+  /* ---------- team · Csapat ---------- */
   // Rendered straight from the data/team.js snapshot (window.TEAM_DATA) — there
   // is no live endpoint, so this section can never blank. Runs BEFORE the films
   // early-return below so it renders even on pages without a films grid.
