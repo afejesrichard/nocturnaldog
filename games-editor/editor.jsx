@@ -157,7 +157,7 @@ function SetupWizard({ onDone }) {
           kommunikáció HTTPS-en zajlik.
         </div>
         <div className="ed-lock-back">
-          <a href="jatekok.html">← vissza a játékadatbázishoz</a>
+          <a href="/jatekok/">← vissza a játékadatbázishoz</a>
         </div>
       </div>
     </div>
@@ -242,7 +242,7 @@ function Login({ onLogin, onReconfig }) {
           {" "}<a onClick={onReconfig}>API URL újrabeállítása</a>
         </div>
         <div className="ed-lock-back">
-          <a href="jatekok.html">← vissza a játékadatbázishoz</a>
+          <a href="/jatekok/">← vissza a játékadatbázishoz</a>
         </div>
       </div>
     </div>
@@ -604,7 +604,7 @@ function EditorApp({ username, onLogout, onReconfig }) {
     <div className="ed-page">
       <header className="ed-bar">
         <div className="ed-bar-inner">
-          <a className="ed-brand" href="index.html">
+          <a className="ed-brand" href="/">
             <img src="assets/nocturnal_logo.png" alt="" />
             <span>Nocturnal Dog</span>
           </a>
